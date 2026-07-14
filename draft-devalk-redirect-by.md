@@ -29,6 +29,7 @@ normative:
 
 informative:
   RFC6648:
+  RFC8126:
   RFC8941:
   RFC9205:
   WP-X-REDIRECT-BY:
@@ -36,6 +37,16 @@ informative:
     target: https://developer.wordpress.org/reference/hooks/x_redirect_by/
     author:
       - org: WordPress
+  WP-USAGE:
+    title: "Usage statistics and market share of content management systems"
+    target: https://w3techs.com/technologies/overview/content_management
+    author:
+      - org: W3Techs
+  TYPO3-REDIRECTS:
+    title: "TYPO3 redirect and shortcut middleware emitting X-Redirect-By"
+    target: https://github.com/TYPO3/typo3/blob/main/typo3/sysext/redirects/Classes/Http/Middleware/RedirectHandler.php
+    author:
+      - org: TYPO3
   YOAST-PROPOSAL:
     title: "Let's introduce the X-Redirect-By header"
     target: https://yoast.com/developer-blog/x-redirect-by-header/
@@ -69,14 +80,22 @@ the software component that generated the redirect. Its presence turns an
 opaque redirect into a self-describing one: the responsible component is named
 in the response itself.
 
-The convention is already deployed at scale under the non-standard name
-X-Redirect-By. WordPress core has emitted X-Redirect-By on redirects since
-version 5.1, exposing it through a filter so that themes and plugins can supply
-their own value {{WP-X-REDIRECT-BY}}; the header was originally proposed in
-{{YOAST-PROPOSAL}}, and other systems have since adopted it. Because {{RFC6648}}
-discourages the "X-" prefix for newly defined header fields, this document
-specifies the field under the unprefixed name Redirect-By and describes the
-relationship to the deployed X-Redirect-By name ({{legacy}}).
+The convention is already deployed on a large share of the web's redirects,
+under the non-standard name X-Redirect-By. WordPress core has emitted
+X-Redirect-By on redirects since version 5.1, exposing it through a filter so
+that themes and plugins can supply their own value {{WP-X-REDIRECT-BY}}; because
+WordPress runs a large fraction of all public websites {{WP-USAGE}}, a
+correspondingly large share of the web's redirects already carry the field.
+TYPO3 emits it from its redirect and shortcut-handling middleware
+{{TYPO3-REDIRECTS}}. The header was originally proposed in {{YOAST-PROPOSAL}} and
+has since been adopted by further systems.
+
+Because {{RFC6648}} discourages the "X-" prefix for newly defined header fields,
+this document specifies the field under the unprefixed name Redirect-By, and
+registers both Redirect-By and the deployed X-Redirect-By name so the registry
+reflects what is on the wire ({{legacy}}, {{iana}}). Existing implementations are
+expected to add Redirect-By alongside X-Redirect-By, sending both during a
+transition period.
 
 # Conventions and Definitions
 
@@ -179,16 +198,36 @@ disclosure is unacceptable can omit the field; it is optional.
 The field describes server-side software, not the user. It carries no user
 identifier and introduces no new client-side state or tracking surface.
 
-# IANA Considerations
+# IANA Considerations {#iana}
 
-IANA is requested to register the following entry in the "Hypertext Transfer
-Protocol (HTTP) Field Name Registry" defined in {{Section 18.4 of RFC9110}}:
+IANA is requested to register the following two entries in the "Hypertext
+Transfer Protocol (HTTP) Field Name Registry" defined in {{Section 18.4 of
+RFC9110}}. Both are requested as permanent registrations; the registry's
+procedure for permanent entries is Specification Required ({{RFC8126}}), for
+which this document is the specification.
+
+Redirect-By is the name defined and recommended by this document. X-Redirect-By
+is registered to document the name under which the field is already widely
+deployed. Registering an already-ubiquitous name is a record of existing
+practice, not the minting of a new "X-" field, and is therefore consistent with
+{{RFC6648}}.
+
+Entry 1:
 
 - Field Name: Redirect-By
 - Status: permanent
 - Structured Type: None
 - Reference: This document
-- Comments: Also deployed under the non-standard name X-Redirect-By.
+- Comments: Preferred name. Also deployed under the legacy name X-Redirect-By.
+
+Entry 2:
+
+- Field Name: X-Redirect-By
+- Status: permanent
+- Structured Type: None
+- Reference: This document
+- Comments: Legacy name for the Redirect-By field ({{field}}), retained for
+  compatibility. New implementations use Redirect-By.
 
 --- back
 
