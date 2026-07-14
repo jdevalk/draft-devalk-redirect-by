@@ -16,13 +16,16 @@ name this draft registers.
 | Software                | Emits today     | `Redirect-By` status               | Source |
 | ----------------------- | --------------- | ---------------------------------- | ------ |
 | **WordPress** core      | `X-Redirect-By` (since 5.1) | Patch prepared — emit both in `wp_redirect()` | [`wp_redirect()`](https://github.com/WordPress/wordpress-develop/blob/trunk/src/wp-includes/pluggable.php) · [#42313](https://core.trac.wordpress.org/ticket/42313) |
+| **ClassicPress**        | `X-Redirect-By` (via `wp_redirect()`) | Patch prepared — mirrors the WordPress change | [`pluggable.php`](https://github.com/ClassicPress/ClassicPress/blob/develop/src/wp-includes/pluggable.php) |
 | **TYPO3**               | `X-Redirect-By` (redirect + shortcut middleware) | Change prepared — emit both | [RedirectHandler](https://github.com/TYPO3/typo3/blob/main/typo3/sysext/redirects/Classes/Http/Middleware/RedirectHandler.php) · [ShortcutAndMountPointRedirect](https://github.com/TYPO3/typo3/blob/main/typo3/sysext/frontend/Classes/Middleware/ShortcutAndMountPointRedirect.php) |
 | **Moodle**              | `X-Redirect-By` (value `Moodle`; adds file:line under `DEBUG_DEVELOPER`) | Candidate | [`weblib.php` `redirect()`](https://github.com/moodle/moodle/blob/main/public/lib/weblib.php#L2240) |
+| **Redirection** (WP plugin) | `X-Redirect-By: redirection`; its redirect-checker UI also *reads* the header | Patch prepared — emit both (checker-UI read is a noted follow-up) | [`actions/error.php`](https://github.com/johngodley/redirection/blob/trunk/actions/error.php) |
+| **The SEO Framework** (WP plugin) | redirects, but no attribution value set | Patch prepared — pass `'The SEO Framework'` to `wp_safe_redirect()` | [`redirect.class.php`](https://github.com/sybrew/the-seo-framework/blob/master/inc/classes/front/redirect.class.php) |
+| **Yoast SEO** (WP plugin) | `X-Redirect-By` (e.g. `Yoast SEO Premium`) | Candidate | — |
+| **Winter CMS** (redirect plugin) | `X-Redirect-By: Winter.Redirect` | Patch prepared — emit both | [`RedirectManager.php`](https://github.com/wintercms/wn-redirect-plugin/blob/main/classes/RedirectManager.php#L181) |
 | **Symfony** HttpFoundation | none          | Candidate — proposed as opt-in `RedirectResponse` support | [`RedirectResponse`](https://github.com/symfony/symfony/blob/8.2/src/Symfony/Component/HttpFoundation/RedirectResponse.php) |
 | **Drupal**              | none (builds on Symfony HttpFoundation) | Candidate | — |
 | **specification.website** | `Redirect-By`  | ✅ Shipping (reference implementation) | [`_middleware.ts`](https://github.com/jdevalk/specification.website/blob/main/functions/_middleware.ts) |
-
-Yoast SEO also sets `X-Redirect-By` (e.g. `Yoast SEO Premium`) on its redirects.
 
 Contributions to move an implementation onto `Redirect-By` (keeping
 `X-Redirect-By` during the transition) are welcome — open an issue or PR here to
