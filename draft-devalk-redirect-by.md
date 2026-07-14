@@ -44,7 +44,7 @@ informative:
       - org: W3Techs
   TYPO3-REDIRECTS:
     title: "TYPO3 redirect and shortcut middleware emitting X-Redirect-By"
-    target: https://github.com/TYPO3/typo3/blob/main/typo3/sysext/redirects/Classes/Http/Middleware/RedirectHandler.php
+    target: https://docs.typo3.org/c/typo3/cms-redirects/main/en-us/
     author:
       - org: TYPO3
   YOAST-PROPOSAL:
