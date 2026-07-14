@@ -88,15 +88,24 @@ Table of Contents
    presence turns an opaque redirect into a self-describing one: the
    responsible component is named in the response itself.
 
-   The convention is already deployed at scale under the non-standard
-   name X-Redirect-By.  WordPress core has emitted X-Redirect-By on
-   redirects since version 5.1, exposing it through a filter so that
-   themes and plugins can supply their own value [WP-X-REDIRECT-BY]; the
-   header was originally proposed in [YOAST-PROPOSAL], and other systems
-   have since adopted it.  Because [RFC6648] discourages the "X-" prefix
-   for newly defined header fields, this document specifies the field
-   under the unprefixed name Redirect-By and describes the relationship
-   to the deployed X-Redirect-By name (Section 4).
+   The convention is already deployed on a large share of the web's
+   redirects, under the non-standard name X-Redirect-By.  WordPress core
+   has emitted X-Redirect-By on redirects since version 5.1, exposing it
+   through a filter so that themes and plugins can supply their own
+   value [WP-X-REDIRECT-BY]; because WordPress runs a large fraction of
+   all public websites [WP-USAGE], a correspondingly large share of the
+   web's redirects already carry the field.  TYPO3 emits it from its
+   redirect and shortcut-handling middleware [TYPO3-REDIRECTS].  The
+   header was originally proposed in [YOAST-PROPOSAL] and has since been
+   adopted by further systems.
+
+   Because [RFC6648] discourages the "X-" prefix for newly defined
+   header fields, this document specifies the field under the unprefixed
+   name Redirect-By, and registers both Redirect-By and the deployed X-
+   Redirect-By name so the registry reflects what is on the wire
+   (Section 4, Section 8).  Existing implementations are expected to add
+   Redirect-By alongside X-Redirect-By, sending both during a transition
+   period.
 
 2.  Conventions and Definitions
 
@@ -216,9 +225,20 @@ Table of Contents
 
 8.  IANA Considerations
 
-   IANA is requested to register the following entry in the "Hypertext
-   Transfer Protocol (HTTP) Field Name Registry" defined in Section 18.4
-   of [RFC9110]:
+   IANA is requested to register the following two entries in the
+   "Hypertext Transfer Protocol (HTTP) Field Name Registry" defined in
+   Section 18.4 of [RFC9110].  Both are requested as permanent
+   registrations; the registry's procedure for permanent entries is
+   Specification Required ([RFC8126]), for which this document is the
+   specification.
+
+   Redirect-By is the name defined and recommended by this document.  X-
+   Redirect-By is registered to document the name under which the field
+   is already widely deployed.  Registering an already-ubiquitous name
+   is a record of existing practice, not the minting of a new "X-"
+   field, and is therefore consistent with [RFC6648].
+
+   Entry 1:
 
    *  Field Name: Redirect-By
 
@@ -228,7 +248,21 @@ Table of Contents
 
    *  Reference: This document
 
-   *  Comments: Also deployed under the non-standard name X-Redirect-By.
+   *  Comments: Preferred name.  Also deployed under the legacy name X-
+      Redirect-By.
+
+   Entry 2:
+
+   *  Field Name: X-Redirect-By
+
+   *  Status: permanent
+
+   *  Structured Type: None
+
+   *  Reference: This document
+
+   *  Comments: Legacy name for the Redirect-By field (Section 3),
+      retained for compatibility.  New implementations use Redirect-By.
 
 9.  References
 
@@ -256,6 +290,11 @@ Table of Contents
               DOI 10.17487/RFC6648, June 2012,
               <https://www.rfc-editor.org/rfc/rfc6648>.
 
+   [RFC8126]  Cotton, M., Leiba, B., and T. Narten, "Guidelines for
+              Writing an IANA Considerations Section in RFCs", BCP 26,
+              RFC 8126, DOI 10.17487/RFC8126, June 2017,
+              <https://www.rfc-editor.org/rfc/rfc8126>.
+
    [RFC8941]  Nottingham, M. and P. Kamp, "Structured Field Values for
               HTTP", RFC 8941, DOI 10.17487/RFC8941, February 2021,
               <https://www.rfc-editor.org/rfc/rfc8941>.
@@ -263,6 +302,17 @@ Table of Contents
    [RFC9205]  Nottingham, M., "Building Protocols with HTTP", BCP 56,
               RFC 9205, DOI 10.17487/RFC9205, June 2022,
               <https://www.rfc-editor.org/rfc/rfc9205>.
+
+   [TYPO3-REDIRECTS]
+              TYPO3, "TYPO3 redirect and shortcut middleware emitting X-
+              Redirect-By", n.d.,
+              <https://github.com/TYPO3/typo3/blob/main/typo3/sysext/redirects/Classes/
+              Http/Middleware/RedirectHandler.php>.
+
+   [WP-USAGE] W3Techs, "Usage statistics and market share of content
+              management systems", n.d.,
+              <https://w3techs.com/technologies/overview/
+              content_management>.
 
    [WP-X-REDIRECT-BY]
               WordPress, "x_redirect_by filter", n.d.,

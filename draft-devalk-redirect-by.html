@@ -1216,14 +1216,21 @@ found, which is slow and error prone.<a href="#section-1-1" class="pilcrow">¶</
 the software component that generated the redirect. Its presence turns an
 opaque redirect into a self-describing one: the responsible component is named
 in the response itself.<a href="#section-1-2" class="pilcrow">¶</a></p>
-<p id="section-1-3">The convention is already deployed at scale under the non-standard name
-X-Redirect-By. WordPress core has emitted X-Redirect-By on redirects since
-version 5.1, exposing it through a filter so that themes and plugins can supply
-their own value <span>[<a href="#WP-X-REDIRECT-BY" class="cite xref">WP-X-REDIRECT-BY</a>]</span>; the header was originally proposed in
-<span>[<a href="#YOAST-PROPOSAL" class="cite xref">YOAST-PROPOSAL</a>]</span>, and other systems have since adopted it. Because <span>[<a href="#RFC6648" class="cite xref">RFC6648</a>]</span>
-discourages the "X-" prefix for newly defined header fields, this document
-specifies the field under the unprefixed name Redirect-By and describes the
-relationship to the deployed X-Redirect-By name (<a href="#legacy" class="auto internal xref">Section 4</a>).<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-3">The convention is already deployed on a large share of the web's redirects,
+under the non-standard name X-Redirect-By. WordPress core has emitted
+X-Redirect-By on redirects since version 5.1, exposing it through a filter so
+that themes and plugins can supply their own value <span>[<a href="#WP-X-REDIRECT-BY" class="cite xref">WP-X-REDIRECT-BY</a>]</span>; because
+WordPress runs a large fraction of all public websites <span>[<a href="#WP-USAGE" class="cite xref">WP-USAGE</a>]</span>, a
+correspondingly large share of the web's redirects already carry the field.
+TYPO3 emits it from its redirect and shortcut-handling middleware
+<span>[<a href="#TYPO3-REDIRECTS" class="cite xref">TYPO3-REDIRECTS</a>]</span>. The header was originally proposed in <span>[<a href="#YOAST-PROPOSAL" class="cite xref">YOAST-PROPOSAL</a>]</span> and
+has since been adopted by further systems.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">Because <span>[<a href="#RFC6648" class="cite xref">RFC6648</a>]</span> discourages the "X-" prefix for newly defined header fields,
+this document specifies the field under the unprefixed name Redirect-By, and
+registers both Redirect-By and the deployed X-Redirect-By name so the registry
+reflects what is on the wire (<a href="#legacy" class="auto internal xref">Section 4</a>, <a href="#iana" class="auto internal xref">Section 8</a>). Existing implementations are
+expected to add Redirect-By alongside X-Redirect-By, sending both during a
+transition period.<a href="#section-1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="conventions-and-definitions">
@@ -1368,28 +1375,55 @@ disclosure is unacceptable can omit the field; it is optional.<a href="#section-
 identifier and introduces no new client-side state or tracking surface.<a href="#section-7-1" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="iana-considerations">
+<div id="iana">
 <section id="section-8">
       <h2 id="name-iana-considerations">
 <a href="#section-8" class="section-number selfRef">8. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<p id="section-8-1">IANA is requested to register the following entry in the "Hypertext Transfer
-Protocol (HTTP) Field Name Registry" defined in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-18.4" class="relref">Section 18.4</a> of [<a href="#RFC9110" class="cite xref">RFC9110</a>]</span>:<a href="#section-8-1" class="pilcrow">¶</a></p>
+<p id="section-8-1">IANA is requested to register the following two entries in the "Hypertext
+Transfer Protocol (HTTP) Field Name Registry" defined in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-18.4" class="relref">Section 18.4</a> of [<a href="#RFC9110" class="cite xref">RFC9110</a>]</span>. Both are requested as permanent registrations; the registry's
+procedure for permanent entries is Specification Required (<span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span>), for
+which this document is the specification.<a href="#section-8-1" class="pilcrow">¶</a></p>
+<p id="section-8-2">Redirect-By is the name defined and recommended by this document. X-Redirect-By
+is registered to document the name under which the field is already widely
+deployed. Registering an already-ubiquitous name is a record of existing
+practice, not the minting of a new "X-" field, and is therefore consistent with
+<span>[<a href="#RFC6648" class="cite xref">RFC6648</a>]</span>.<a href="#section-8-2" class="pilcrow">¶</a></p>
+<p id="section-8-3">Entry 1:<a href="#section-8-3" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-8-2.1">
-          <p id="section-8-2.1.1">Field Name: Redirect-By<a href="#section-8-2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-8-4.1">
+          <p id="section-8-4.1.1">Field Name: Redirect-By<a href="#section-8-4.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-2.2">
-          <p id="section-8-2.2.1">Status: permanent<a href="#section-8-2.2.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-8-4.2">
+          <p id="section-8-4.2.1">Status: permanent<a href="#section-8-4.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-2.3">
-          <p id="section-8-2.3.1">Structured Type: None<a href="#section-8-2.3.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-8-4.3">
+          <p id="section-8-4.3.1">Structured Type: None<a href="#section-8-4.3.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-2.4">
-          <p id="section-8-2.4.1">Reference: This document<a href="#section-8-2.4.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-8-4.4">
+          <p id="section-8-4.4.1">Reference: This document<a href="#section-8-4.4.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-2.5">
-          <p id="section-8-2.5.1">Comments: Also deployed under the non-standard name X-Redirect-By.<a href="#section-8-2.5.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-8-4.5">
+          <p id="section-8-4.5.1">Comments: Preferred name. Also deployed under the legacy name X-Redirect-By.<a href="#section-8-4.5.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-8-5">Entry 2:<a href="#section-8-5" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8-6.1">
+          <p id="section-8-6.1.1">Field Name: X-Redirect-By<a href="#section-8-6.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-8-6.2">
+          <p id="section-8-6.2.1">Status: permanent<a href="#section-8-6.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-8-6.3">
+          <p id="section-8-6.3.1">Structured Type: None<a href="#section-8-6.3.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-8-6.4">
+          <p id="section-8-6.4.1">Reference: This document<a href="#section-8-6.4.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-8-6.5">
+          <p id="section-8-6.5.1">Comments: Legacy name for the Redirect-By field (<a href="#field" class="auto internal xref">Section 3</a>), retained for
+compatibility. New implementations use Redirect-By.<a href="#section-8-6.5.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 </section>
@@ -1430,6 +1464,10 @@ Protocol (HTTP) Field Name Registry" defined in <span><a href="https://rfc-edito
         <dd>
 <span class="refAuthor">Saint-Andre, P.</span>, <span class="refAuthor">Crocker, D.</span>, and <span class="refAuthor">M. Nottingham</span>, <span class="refTitle">"Deprecating the "X-" Prefix and Similar Constructs in Application Protocols"</span>, <span class="seriesInfo">BCP 178</span>, <span class="seriesInfo">RFC 6648</span>, <span class="seriesInfo">DOI 10.17487/RFC6648</span>, <time datetime="2012-06" class="refDate">June 2012</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6648">https://www.rfc-editor.org/rfc/rfc6648</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="RFC8126">[RFC8126]</dt>
+        <dd>
+<span class="refAuthor">Cotton, M.</span>, <span class="refAuthor">Leiba, B.</span>, and <span class="refAuthor">T. Narten</span>, <span class="refTitle">"Guidelines for Writing an IANA Considerations Section in RFCs"</span>, <span class="seriesInfo">BCP 26</span>, <span class="seriesInfo">RFC 8126</span>, <span class="seriesInfo">DOI 10.17487/RFC8126</span>, <time datetime="2017-06" class="refDate">June 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8126">https://www.rfc-editor.org/rfc/rfc8126</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC8941">[RFC8941]</dt>
         <dd>
 <span class="refAuthor">Nottingham, M.</span> and <span class="refAuthor">P. Kamp</span>, <span class="refTitle">"Structured Field Values for HTTP"</span>, <span class="seriesInfo">RFC 8941</span>, <span class="seriesInfo">DOI 10.17487/RFC8941</span>, <time datetime="2021-02" class="refDate">February 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8941">https://www.rfc-editor.org/rfc/rfc8941</a>&gt;</span>. </dd>
@@ -1437,6 +1475,14 @@ Protocol (HTTP) Field Name Registry" defined in <span><a href="https://rfc-edito
 <dt id="RFC9205">[RFC9205]</dt>
         <dd>
 <span class="refAuthor">Nottingham, M.</span>, <span class="refTitle">"Building Protocols with HTTP"</span>, <span class="seriesInfo">BCP 56</span>, <span class="seriesInfo">RFC 9205</span>, <span class="seriesInfo">DOI 10.17487/RFC9205</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9205">https://www.rfc-editor.org/rfc/rfc9205</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="TYPO3-REDIRECTS">[TYPO3-REDIRECTS]</dt>
+        <dd>
+<span class="refAuthor">TYPO3</span>, <span class="refTitle">"TYPO3 redirect and shortcut middleware emitting X-Redirect-By"</span>, <span>n.d.</span>, <span>&lt;<a href="https://github.com/TYPO3/typo3/blob/main/typo3/sysext/redirects/Classes/Http/Middleware/RedirectHandler.php">https://github.com/TYPO3/typo3/blob/main/typo3/sysext/redirects/Classes/Http/Middleware/RedirectHandler.php</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="WP-USAGE">[WP-USAGE]</dt>
+        <dd>
+<span class="refAuthor">W3Techs</span>, <span class="refTitle">"Usage statistics and market share of content management systems"</span>, <span>n.d.</span>, <span>&lt;<a href="https://w3techs.com/technologies/overview/content_management">https://w3techs.com/technologies/overview/content_management</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="WP-X-REDIRECT-BY">[WP-X-REDIRECT-BY]</dt>
         <dd>
