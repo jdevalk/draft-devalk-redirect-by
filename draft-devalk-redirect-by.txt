@@ -305,9 +305,8 @@ Table of Contents
 
    [TYPO3-REDIRECTS]
               TYPO3, "TYPO3 redirect and shortcut middleware emitting X-
-              Redirect-By", n.d.,
-              <https://github.com/TYPO3/typo3/blob/main/typo3/sysext/redirects/Classes/
-              Http/Middleware/RedirectHandler.php>.
+              Redirect-By", n.d., <https://docs.typo3.org/c/typo3/cms-
+              redirects/main/en-us/>.
 
    [WP-USAGE] W3Techs, "Usage statistics and market share of content
               management systems", n.d.,
