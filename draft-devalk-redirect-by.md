@@ -234,9 +234,9 @@ Entry 2:
 # Acknowledgements
 {:numbered="false"}
 
-The convention originated during a large domain migration in which multiple
-systems issued redirects simultaneously, and was first proposed publicly in
-{{YOAST-PROPOSAL}}. The author thanks the WordPress core contributors who
+The convention originated during the migration of *The Guardian*'s website from
+guardian.co.uk to theguardian.com, in which multiple systems issued redirects
+simultaneously, and was first proposed publicly in {{YOAST-PROPOSAL}}. The author thanks the WordPress core contributors who
 implemented X-Redirect-By {{WP-X-REDIRECT-BY}}, and the maintainers of the other
 systems that adopted it, for establishing the deployed practice this document
 standardizes.
