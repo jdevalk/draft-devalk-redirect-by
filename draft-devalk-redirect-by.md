@@ -25,23 +25,19 @@ author:
     uri: https://joost.blog/
 
 normative:
+  RFC5234:
   RFC9110:
 
 informative:
   RFC6648:
   RFC8126:
-  RFC8941:
+  RFC9651:
   RFC9205:
   WP-X-REDIRECT-BY:
     title: "x_redirect_by filter"
     target: https://developer.wordpress.org/reference/hooks/x_redirect_by/
     author:
       - org: WordPress
-  WP-USAGE:
-    title: "Usage statistics and market share of content management systems"
-    target: https://w3techs.com/technologies/overview/content_management
-    author:
-      - org: W3Techs
   TYPO3-REDIRECTS:
     title: "TYPO3 redirect and shortcut middleware emitting X-Redirect-By"
     target: https://docs.typo3.org/c/typo3/cms-redirects/main/en-us/
@@ -56,10 +52,11 @@ informative:
 --- abstract
 
 This document defines the Redirect-By HTTP response header field. It allows the
-software that generates an HTTP redirect to identify itself, so that an operator
-diagnosing a redirect can determine which component produced it. The field
-records the same information as the widely deployed, non-standard X-Redirect-By
-header, under a name that follows current guidance on header field naming.
+software component whose decision determined an HTTP redirect to identify
+itself, so that an operator diagnosing a redirect can determine which component
+was responsible for it. The field records the same information as the widely
+deployed, non-standard X-Redirect-By header, under a name that follows current
+guidance on header field naming.
 
 --- middle
 
@@ -76,43 +73,48 @@ proceeds by disabling components one at a time until the responsible one is
 found, which is slow and error prone.
 
 This document defines the Redirect-By response header field, whose value names
-the software component that generated the redirect. Its presence turns an
-opaque redirect into a self-describing one: the responsible component is named
-in the response itself.
+the software component whose decision determined the redirect. Its presence
+turns an opaque redirect into a self-describing one: the responsible component
+is named in the response itself.
 
-The convention is already deployed on a large share of the web's redirects,
-under the non-standard name X-Redirect-By. WordPress core has emitted
-X-Redirect-By on redirects since version 5.1, exposing it through a filter so
-that themes and plugins can supply their own value {{WP-X-REDIRECT-BY}}; because
-WordPress runs a large fraction of all public websites {{WP-USAGE}}, a
-correspondingly large share of the web's redirects already carry the field.
-TYPO3 emits it from its redirect and shortcut-handling middleware
-{{TYPO3-REDIRECTS}}. The header was originally proposed in {{YOAST-PROPOSAL}} and
-has since been adopted by further systems.
+The convention is widely deployed under the non-standard name X-Redirect-By.
+Since version 5.1, WordPress core has emitted X-Redirect-By on every redirect
+generated through `wp_redirect()`; `wp_safe_redirect()` delegates to that
+function. WordPress exposes the value through a filter so that themes and
+plugins can identify themselves {{WP-X-REDIRECT-BY}}. TYPO3 emits the field from
+its redirect and shortcut-handling middleware {{TYPO3-REDIRECTS}}. This
+demonstrates deployment across multiple independent implementations and a large
+installed base; this document does not attempt to quantify the proportion of
+all HTTP redirects that carry the field. The header was originally proposed in
+{{YOAST-PROPOSAL}}.
 
-Because {{RFC6648}} discourages the "X-" prefix for newly defined header fields,
-this document specifies the field under the unprefixed name Redirect-By, and
-registers both Redirect-By and the deployed X-Redirect-By name so the registry
-reflects what is on the wire ({{legacy}}, {{iana}}). Existing implementations are
-expected to add Redirect-By alongside X-Redirect-By, sending both during a
-transition period.
+{{RFC6648}} discourages the "X-" prefix for newly defined header fields but
+makes no recommendation about whether an existing "X-" field ought to migrate.
+This document defines Redirect-By as the preferred spelling and registers the
+deployed X-Redirect-By spelling so the registry reflects what is on the wire
+({{legacy}}, {{iana}}). Existing implementations can add Redirect-By alongside
+X-Redirect-By without changing the field value syntax.
 
 # Conventions and Definitions
 
 {::boilerplate bcp14-tagged}
 
-The term "redirect" refers to a response with a 3xx (Redirection) status code
-as defined in {{Section 15.4 of RFC9110}}.
+The term "redirect" refers to a response with a 3xx (Redirection) status code,
+other than 304 (Not Modified), that contains a Location field, as defined in
+{{Section 15.4 of RFC9110}}.
+
+The "redirect decision-maker" is the component whose decision determines the
+status code and Location field of a redirect response. It is not necessarily the
+HTTP server or intermediary that serializes or forwards that response.
 
 # The Redirect-By Field {#field}
 
-The "Redirect-By" response header field allows the software component that
-generated a redirect to identify itself.
+The "Redirect-By" response header field allows the redirect decision-maker to
+identify itself.
 
-A server or intermediary that generates a redirect MAY include a Redirect-By
-field in that response. When present, its value SHOULD be a short, stable
-identifier for the software component that produced the redirect, such as a
-product, service, or plugin name.
+A redirect decision-maker MAY include a Redirect-By field in the response. When
+present, its value SHOULD be a short, stable identifier for that component, such
+as a product, service, or plugin name.
 
 The field is informational. A recipient MUST NOT treat the presence, absence, or
 value of Redirect-By as altering the meaning of the redirect; the Location field
@@ -122,61 +124,69 @@ does not understand the field ignores it, as with any unrecognized field
 
 ## Syntax
 
-The field value is a non-empty, human-readable identifier. Its syntax is defined
-using the ABNF of {{Section 5.6.1 of RFC9110}}:
+The field value is a non-empty, human-readable identifier. Its syntax uses the
+ABNF notation and core rules of {{RFC5234}}:
 
 ~~~ abnf
 Redirect-By = redirect-agent
-redirect-agent = VCHAR *( SP / VCHAR )
+redirect-agent = VCHAR [ *( SP / VCHAR ) VCHAR ]
 ~~~
 
-That is, the value is a sequence of visible US-ASCII characters that MAY contain
+That is, the value is a sequence of visible ASCII characters that MAY contain
 interior spaces (for example, "Yoast SEO Premium"), with no leading or trailing
-space. Redirect-By is a singleton field: a redirect response generates at most
-one Redirect-By value, naming the component that produced that particular
-response. A recipient that receives multiple Redirect-By values, or a
-comma-separated list, SHOULD treat only the first as significant.
+space. Redirect-By is a singleton field, not a list. A sender MUST NOT generate
+more than one Redirect-By field line in a response. A recipient that receives
+more than one Redirect-By field line MUST ignore the field. A comma is an
+ordinary character within a redirect-agent value, not a value separator;
+recipients MUST NOT split the value on commas.
 
 Deployed implementations send the value as free-form text rather than as a
-Structured Field ({{RFC8941}}); see {{structured}} for the rationale.
+Structured Field ({{RFC9651}}); see {{structured}} for the rationale.
 
 ## Multiple Redirects and Intermediaries
 
 Where a request passes through several components that each redirect, each
-component sets Redirect-By on the response it generates. Because a redirect is
-resolved one hop at a time, the value observed on any single response identifies
-the one component that produced that hop, which is the component an operator is
-looking for. An intermediary that forwards a redirect response it did not
-generate SHOULD NOT add or modify the Redirect-By field.
+redirect is a separate response with its own decision-maker. Because a redirect
+is resolved one hop at a time, the value on any single response identifies the
+one component that determined the status code and Location field for that hop.
+
+An intermediary that forwards a redirect response without changing its status
+code or Location field SHOULD NOT add or modify Redirect-By. An intermediary
+that changes either value and thereby becomes the redirect decision-maker MUST
+replace any existing Redirect-By value with its own identifier or remove the
+field.
 
 # Relationship to X-Redirect-By {#legacy}
 
 The field defined here is deployed at scale under the name X-Redirect-By.
 {{RFC6648}} recommends against the "X-" prefix for new fields and against
-assuming any semantic distinction between an "X-"-prefixed name and its
-unprefixed counterpart. Accordingly:
+assuming any semantic distinction based only on whether a name has that prefix.
+This document defines the following migration behavior:
 
-- New implementations SHOULD send Redirect-By.
-- Recipients SHOULD treat Redirect-By and X-Redirect-By as carrying the same
-  information. Where both appear, Redirect-By takes precedence.
-- An implementation MAY additionally send X-Redirect-By during a transition
-  period for the benefit of tools that recognize only the legacy name.
+- New implementations SHOULD send only Redirect-By.
+- Existing implementations that send X-Redirect-By SHOULD add Redirect-By and
+  MAY retain X-Redirect-By for compatibility with existing recipients.
+- When an implementation sends both names, it MUST send the same redirect-agent
+  value in each.
+- Recipients SHOULD recognize both names. Where both appear, a valid Redirect-By
+  value takes precedence over X-Redirect-By.
 
-This document does not deprecate X-Redirect-By, which remains in wide use; it
-provides the unprefixed name as the preferred spelling going forward.
+X-Redirect-By remains in wide use, but its spelling is legacy and is discouraged
+for new implementations. Redirect-By is the preferred spelling going forward.
 
 # Design Considerations
 
 ## Not a Structured Field {#structured}
 
-{{RFC9205}} recommends that new HTTP fields use Structured Fields {{RFC8941}}.
-Redirect-By does not, because it standardizes an existing deployment in which
-values are transmitted as free-form text without the double-quoting a Structured
-Field String requires. Requiring Structured Field syntax would render the large
-installed base of X-Redirect-By values non-conformant for no operational gain,
-since the value is consumed by humans reading a response rather than parsed by
-machines. Implementers who prefer to constrain values MAY restrict them to a
-token as defined in {{Section 5.6.2 of RFC9110}}.
+{{RFC9205}} recommends that new HTTP fields use Structured Fields {{RFC9651}}.
+Redirect-By intentionally retains the deployed X-Redirect-By value syntax. This
+allows existing generators to emit the same value under both names without
+transformation and allows recipients to migrate between names without adopting
+two value parsers. Structured Field serialization would require quoting and
+escaping values that the installed base transmits as unquoted text, causing the
+two spellings to differ on the wire. Because the field contains one opaque
+identifier and defines no list members or parameters, this document considers
+wire-format compatibility more valuable than adopting Structured Fields.
 
 # Security Considerations
 
@@ -227,7 +237,7 @@ Entry 2:
 - Structured Type: None
 - Reference: This document
 - Comments: Legacy name for the Redirect-By field ({{field}}), retained for
-  compatibility. New implementations use Redirect-By.
+  compatibility. Its use by new implementations is discouraged.
 
 --- back
 
