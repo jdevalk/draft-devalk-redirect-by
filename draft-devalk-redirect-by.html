@@ -10,9 +10,8 @@
        This document defines the Redirect-By HTTP response header field. It allows the
 software component whose decision determined an HTTP redirect to identify
 itself, so that an operator diagnosing a redirect can determine which component
-was responsible for it. The field records the same information as the widely
-deployed, non-standard X-Redirect-By header, under a name that follows current
-guidance on header field naming. 
+was responsible for it. The field succeeds the widely deployed, non-standard
+X-Redirect-By header, which this document deprecates. 
     " name="description">
 <meta content="xml2rfc 3.34.0" name="generator">
 <meta content="redirect" name="keyword">
@@ -29,7 +28,7 @@ guidance on header field naming.
     Jinja2 3.1.6
     lxml 6.1.1
     natsort 8.4.0
-    platformdirs 4.10.0
+    platformdirs 4.10.1
     pycountry 24.6.1
     PyYAML 6.0.3
     requests 2.33.1
@@ -1056,7 +1055,7 @@ svg {
 </tr></thead>
 <tfoot><tr>
 <td class="left">de Valk</td>
-<td class="center">Expires 16 January 2027</td>
+<td class="center">Expires 20 January 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1069,12 +1068,12 @@ svg {
 <dd class="internet-draft">draft-devalk-redirect-by-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-07-15" class="published">15 July 2026</time>
+<time datetime="2026-07-19" class="published">19 July 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-01-16">16 January 2027</time></dd>
+<dd class="expires"><time datetime="2027-01-20">20 January 2027</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1090,9 +1089,8 @@ svg {
 <p id="section-abstract-1">This document defines the Redirect-By HTTP response header field. It allows the
 software component whose decision determined an HTTP redirect to identify
 itself, so that an operator diagnosing a redirect can determine which component
-was responsible for it. The field records the same information as the widely
-deployed, non-standard X-Redirect-By header, under a name that follows current
-guidance on header field naming.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+was responsible for it. The field succeeds the widely deployed, non-standard
+X-Redirect-By header, which this document deprecates.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <div id="status-of-memo">
 <section id="section-boilerplate.1">
@@ -1113,7 +1111,7 @@ guidance on header field naming.<a href="#section-abstract-1" class="pilcrow">¶
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 16 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 20 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1166,7 +1164,7 @@ guidance on header field naming.<a href="#section-abstract-1" class="pilcrow">¶
             <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-design-considerations" class="internal xref">Design Considerations</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
-                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-not-a-structured-field" class="internal xref">Not a Structured Field</a></p>
+                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-a-structured-field" class="internal xref">A Structured Field</a></p>
 </li>
             </ul>
 </li>
@@ -1219,9 +1217,9 @@ the software component whose decision determined the redirect. Its presence
 turns an opaque redirect into a self-describing one: the responsible component
 is named in the response itself.<a href="#section-1-2" class="pilcrow">¶</a></p>
 <p id="section-1-3">The convention is widely deployed under the non-standard name X-Redirect-By.
-Since version 5.1, WordPress core has emitted X-Redirect-By on every redirect
-generated through <code>wp_redirect()</code>; <code>wp_safe_redirect()</code> delegates to that
-function. WordPress exposes the value through a filter so that themes and
+Since version 5.1, WordPress core has, by default, emitted X-Redirect-By on
+every redirect generated through <code>wp_redirect()</code>; <code>wp_safe_redirect()</code>
+delegates to that function. WordPress exposes the value through a filter so that themes and
 plugins can identify themselves <span>[<a href="#WP-X-REDIRECT-BY" class="cite xref">WP-X-REDIRECT-BY</a>]</span>. TYPO3 emits the field from
 its redirect and shortcut-handling middleware <span>[<a href="#TYPO3-REDIRECTS" class="cite xref">TYPO3-REDIRECTS</a>]</span>. This
 demonstrates deployment across multiple independent implementations and a large
@@ -1230,10 +1228,11 @@ all HTTP redirects that carry the field. The header was originally proposed in
 <span>[<a href="#YOAST-PROPOSAL" class="cite xref">YOAST-PROPOSAL</a>]</span>.<a href="#section-1-3" class="pilcrow">¶</a></p>
 <p id="section-1-4"><span>[<a href="#RFC6648" class="cite xref">RFC6648</a>]</span> discourages the "X-" prefix for newly defined header fields but
 makes no recommendation about whether an existing "X-" field ought to migrate.
-This document defines Redirect-By as the preferred spelling and registers the
-deployed X-Redirect-By spelling so the registry reflects what is on the wire
-(<a href="#legacy" class="auto internal xref">Section 4</a>, <a href="#iana" class="auto internal xref">Section 8</a>). Existing implementations can add Redirect-By alongside
-X-Redirect-By without changing the field value syntax.<a href="#section-1-4" class="pilcrow">¶</a></p>
+This document chooses migration: it defines Redirect-By as the successor
+field, specified as a Structured Field <span>[<a href="#RFC9651" class="cite xref">RFC9651</a>]</span>, and deprecates
+X-Redirect-By while registering it so the registry reflects what is on the
+wire (<a href="#legacy" class="auto internal xref">Section 4</a>, <a href="#iana" class="auto internal xref">Section 8</a>). Existing implementations can send Redirect-By
+alongside X-Redirect-By during the transition (<a href="#legacy" class="auto internal xref">Section 4</a>).<a href="#section-1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="conventions-and-definitions">
@@ -1245,12 +1244,12 @@ X-Redirect-By without changing the field value syntax.<a href="#section-1-4" cla
 "<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
 described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
 appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
-<p id="section-2-2">The term "redirect" refers to a response with a 3xx (Redirection) status code,
-other than 304 (Not Modified), that contains a Location field, as defined in
-<span><a href="https://rfc-editor.org/rfc/rfc9110#section-15.4" class="relref">Section 15.4</a> of [<a href="#RFC9110" class="cite xref">RFC9110</a>]</span>.<a href="#section-2-2" class="pilcrow">¶</a></p>
+<p id="section-2-2">The term "redirect" refers to a response with a 3xx (Redirection) status code
+(<span><a href="https://rfc-editor.org/rfc/rfc9110#section-15.4" class="relref">Section 15.4</a> of [<a href="#RFC9110" class="cite xref">RFC9110</a>]</span>), other than 304 (Not Modified), that contains a
+Location field.<a href="#section-2-2" class="pilcrow">¶</a></p>
 <p id="section-2-3">The "redirect decision-maker" is the component whose decision determines the
-status code and Location field of a redirect response. It is not necessarily the
-HTTP server or intermediary that serializes or forwards that response.<a href="#section-2-3" class="pilcrow">¶</a></p>
+Location field of a redirect response. It is not necessarily the HTTP server
+or intermediary that serializes or forwards that response.<a href="#section-2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="field">
@@ -1273,23 +1272,30 @@ does not understand the field ignores it, as with any unrecognized field
         <h3 id="name-syntax">
 <a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-syntax" class="section-name selfRef">Syntax</a>
         </h3>
-<p id="section-3.1-1">The field value is a non-empty, human-readable identifier. Its syntax uses the
-ABNF notation and core rules of <span>[<a href="#RFC5234" class="cite xref">RFC5234</a>]</span>:<a href="#section-3.1-1" class="pilcrow">¶</a></p>
-<div class="lang-abnf sourcecode" id="section-3.1-2">
+<p id="section-3.1-1">Redirect-By is an Item Structured Field <span>[<a href="#RFC9651" class="cite xref">RFC9651</a>]</span>. Its value <span class="bcp14">MUST</span> be a Token
+(<span><a href="https://rfc-editor.org/rfc/rfc9651#section-3.3.4" class="relref">Section 3.3.4</a> of [<a href="#RFC9651" class="cite xref">RFC9651</a>]</span>) or a String (<span><a href="https://rfc-editor.org/rfc/rfc9651#section-3.3.3" class="relref">Section 3.3.3</a> of [<a href="#RFC9651" class="cite xref">RFC9651</a>]</span>)
+naming the redirect decision-maker; this document defines no parameters. For
+example:<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3.1-2">
 <pre>
-Redirect-By = redirect-agent
-redirect-agent = VCHAR [ *( SP / VCHAR ) VCHAR ]
+Redirect-By: WordPress
 </pre><a href="#section-3.1-2" class="pilcrow">¶</a>
 </div>
-<p id="section-3.1-3">That is, the value is a sequence of visible ASCII characters that <span class="bcp14">MAY</span> contain
-interior spaces (for example, "Yoast SEO Premium"), with no leading or trailing
-space. Redirect-By is a singleton field, not a list. A sender <span class="bcp14">MUST NOT</span> generate
-more than one Redirect-By field line in a response. A recipient that receives
-more than one Redirect-By field line <span class="bcp14">MUST</span> ignore the field. A comma is an
-ordinary character within a redirect-agent value, not a value separator;
-recipients <span class="bcp14">MUST NOT</span> split the value on commas.<a href="#section-3.1-3" class="pilcrow">¶</a></p>
-<p id="section-3.1-4">Deployed implementations send the value as free-form text rather than as a
-Structured Field (<span>[<a href="#RFC9651" class="cite xref">RFC9651</a>]</span>); see <a href="#structured" class="auto internal xref">Section 5.1</a> for the rationale.<a href="#section-3.1-4" class="pilcrow">¶</a></p>
+<p id="section-3.1-3">or, for an identifier that a Token cannot carry:<a href="#section-3.1-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3.1-4">
+<pre>
+Redirect-By: "Yoast SEO Premium"
+</pre><a href="#section-3.1-4" class="pilcrow">¶</a>
+</div>
+<p id="section-3.1-5">Redirect-By is a singleton field, not a list. A sender <span class="bcp14">MUST NOT</span> generate more
+than one Redirect-By field line in a response. A recipient <span class="bcp14">MUST</span> process the
+field as a Structured Field Item; if that parsing fails, or the value is
+neither a Token nor a String, the recipient <span class="bcp14">MUST</span> ignore the field. This rule
+also disposes of duplicate field lines: combining them into a single value
+(<span><a href="https://rfc-editor.org/rfc/rfc9110#section-5.2" class="relref">Section 5.2</a> of [<a href="#RFC9110" class="cite xref">RFC9110</a>]</span>) produces a value that does not parse as an Item,
+so the field is ignored.<a href="#section-3.1-5" class="pilcrow">¶</a></p>
+<p id="section-3.1-6">The deployed X-Redirect-By field carries the identifier as free-form text
+rather than as a Structured Field; see <a href="#legacy" class="auto internal xref">Section 4</a>.<a href="#section-3.1-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="multiple-redirects-and-intermediaries">
@@ -1300,12 +1306,12 @@ Structured Field (<span>[<a href="#RFC9651" class="cite xref">RFC9651</a>]</span
 <p id="section-3.2-1">Where a request passes through several components that each redirect, each
 redirect is a separate response with its own decision-maker. Because a redirect
 is resolved one hop at a time, the value on any single response identifies the
-one component that determined the status code and Location field for that hop.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
-<p id="section-3.2-2">An intermediary that forwards a redirect response without changing its status
-code or Location field <span class="bcp14">SHOULD NOT</span> add or modify Redirect-By. An intermediary
-that changes either value and thereby becomes the redirect decision-maker <span class="bcp14">MUST</span>
-replace any existing Redirect-By value with its own identifier or remove the
-field.<a href="#section-3.2-2" class="pilcrow">¶</a></p>
+one component that determined the Location field for that hop.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.2-2">An intermediary that forwards a redirect response without changing its Location
+field <span class="bcp14">SHOULD NOT</span> add or modify Redirect-By, even if it modifies other parts of
+the response, such as the status code. An intermediary that changes the
+Location field thereby becomes the redirect decision-maker and <span class="bcp14">MUST</span> replace any
+existing Redirect-By value with its own identifier or remove the field.<a href="#section-3.2-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1315,29 +1321,39 @@ field.<a href="#section-3.2-2" class="pilcrow">¶</a></p>
       <h2 id="name-relationship-to-x-redirect-">
 <a href="#section-4" class="section-number selfRef">4. </a><a href="#name-relationship-to-x-redirect-" class="section-name selfRef">Relationship to X-Redirect-By</a>
       </h2>
-<p id="section-4-1">The field defined here is deployed at scale under the name X-Redirect-By.
-<span>[<a href="#RFC6648" class="cite xref">RFC6648</a>]</span> recommends against the "X-" prefix for new fields and against
-assuming any semantic distinction based only on whether a name has that prefix.
-This document defines the following migration behavior:<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-4-1">The information carried by Redirect-By has been deployed at scale under the
+non-standard name X-Redirect-By, which carries the identifier as free-form
+text: a sequence of visible ASCII characters, possibly with interior spaces,
+without Structured Field serialization. <span>[<a href="#RFC6648" class="cite xref">RFC6648</a>]</span> recommends against the
+"X-" prefix for new fields and against assuming any semantic distinction based
+only on whether a name has that prefix. This document deprecates X-Redirect-By
+and defines the following migration behavior:<a href="#section-4-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4-2.1">
-          <p id="section-4-2.1.1">New implementations <span class="bcp14">SHOULD</span> send only Redirect-By.<a href="#section-4-2.1.1" class="pilcrow">¶</a></p>
+          <p id="section-4-2.1.1">New implementations <span class="bcp14">SHOULD</span> send Redirect-By and <span class="bcp14">SHOULD NOT</span> send
+X-Redirect-By.<a href="#section-4-2.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-4-2.2">
-          <p id="section-4-2.2.1">Existing implementations that send X-Redirect-By <span class="bcp14">SHOULD</span> add Redirect-By and
-<span class="bcp14">MAY</span> retain X-Redirect-By for compatibility with existing recipients.<a href="#section-4-2.2.1" class="pilcrow">¶</a></p>
+          <p id="section-4-2.2.1">Existing implementations that send X-Redirect-By <span class="bcp14">SHOULD</span> also send
+Redirect-By, and <span class="bcp14">SHOULD</span> stop sending X-Redirect-By once the recipients they
+serve recognize the new name.<a href="#section-4-2.2.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-4-2.3">
-          <p id="section-4-2.3.1">When an implementation sends both names, it <span class="bcp14">MUST</span> send the same redirect-agent
-value in each.<a href="#section-4-2.3.1" class="pilcrow">¶</a></p>
+          <p id="section-4-2.3.1">When an implementation sends both fields, both <span class="bcp14">MUST</span> name the same
+decision-maker, even though the serializations can differ: for example,
+<code>X-Redirect-By: Yoast SEO Premium</code> alongside
+<code>Redirect-By: "Yoast SEO Premium"</code>.<a href="#section-4-2.3.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-4-2.4">
-          <p id="section-4-2.4.1">Recipients <span class="bcp14">SHOULD</span> recognize both names. Where both appear, a valid Redirect-By
-value takes precedence over X-Redirect-By.<a href="#section-4-2.4.1" class="pilcrow">¶</a></p>
+          <p id="section-4-2.4.1">Recipients <span class="bcp14">SHOULD</span> recognize both names. A Redirect-By field that is not
+ignored under the rules of <a href="#field" class="auto internal xref">Section 3</a> takes precedence over X-Redirect-By; a
+recipient <span class="bcp14">MAY</span> fall back to X-Redirect-By when Redirect-By is absent or
+ignored.<a href="#section-4-2.4.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-4-3">X-Redirect-By remains in wide use, but its spelling is legacy and is discouraged
-for new implementations. Redirect-By is the preferred spelling going forward.<a href="#section-4-3" class="pilcrow">¶</a></p>
+<p id="section-4-3">Deprecation records that use of the X-Redirect-By name is discouraged; it does
+not make existing responses that carry it invalid, and recipients are expected
+to keep recognizing the legacy name while it remains widely deployed.<a href="#section-4-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="design-considerations">
@@ -1347,18 +1363,19 @@ for new implementations. Redirect-By is the preferred spelling going forward.<a 
       </h2>
 <div id="structured">
 <section id="section-5.1">
-        <h3 id="name-not-a-structured-field">
-<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-not-a-structured-field" class="section-name selfRef">Not a Structured Field</a>
+        <h3 id="name-a-structured-field">
+<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-a-structured-field" class="section-name selfRef">A Structured Field</a>
         </h3>
-<p id="section-5.1-1"><span>[<a href="#RFC9205" class="cite xref">RFC9205</a>]</span> recommends that new HTTP fields use Structured Fields <span>[<a href="#RFC9651" class="cite xref">RFC9651</a>]</span>.
-Redirect-By intentionally retains the deployed X-Redirect-By value syntax. This
-allows existing generators to emit the same value under both names without
-transformation and allows recipients to migrate between names without adopting
-two value parsers. Structured Field serialization would require quoting and
-escaping values that the installed base transmits as unquoted text, causing the
-two spellings to differ on the wire. Because the field contains one opaque
-identifier and defines no list members or parameters, this document considers
-wire-format compatibility more valuable than adopting Structured Fields.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1-1"><span>[<a href="#RFC9205" class="cite xref">RFC9205</a>]</span> recommends that new HTTP fields use Structured Fields <span>[<a href="#RFC9651" class="cite xref">RFC9651</a>]</span>,
+and Redirect-By follows that recommendation. The deployed X-Redirect-By field
+predates this document and transmits its value as unquoted free-form text, so
+the two fields can differ on the wire: an identifier containing spaces is sent
+bare in X-Redirect-By but as a quoted String in Redirect-By. This document
+accepts that divergence. Migration already requires senders to adopt a new
+field name, so adopting the standard serialization at the same time costs
+little, and it buys well-defined parsing, an unambiguous rule for duplicate or
+combined field lines (<a href="#field" class="auto internal xref">Section 3</a>), and the ability for future documents to
+extend the field with parameters.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1396,49 +1413,48 @@ identifier and introduces no new client-side state or tracking surface.<a href="
 <a href="#section-8" class="section-number selfRef">8. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
 <p id="section-8-1">IANA is requested to register the following two entries in the "Hypertext
-Transfer Protocol (HTTP) Field Name Registry" defined in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-18.4" class="relref">Section 18.4</a> of [<a href="#RFC9110" class="cite xref">RFC9110</a>]</span>. Both are requested as permanent registrations; the registry's
-procedure for permanent entries is Specification Required (<span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span>), for
-which this document is the specification.<a href="#section-8-1" class="pilcrow">¶</a></p>
-<p id="section-8-2">Redirect-By is the name defined and recommended by this document. X-Redirect-By
-is registered to document the name under which the field is already widely
-deployed. Registering an already-ubiquitous name is a record of existing
-practice, not the minting of a new "X-" field, and is therefore consistent with
-<span>[<a href="#RFC6648" class="cite xref">RFC6648</a>]</span>.<a href="#section-8-2" class="pilcrow">¶</a></p>
-<p id="section-8-3">Entry 1:<a href="#section-8-3" class="pilcrow">¶</a></p>
+Transfer Protocol (HTTP) Field Name Registry" defined in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-18.4" class="relref">Section 18.4</a> of [<a href="#RFC9110" class="cite xref">RFC9110</a>]</span>. Redirect-By is requested as a permanent registration; the
+registry's procedure for permanent entries is Specification Required
+(<span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span>), for which this document is the specification. X-Redirect-By is
+requested with a status of "deprecated", documenting the name under which the
+field was widely deployed before this document and recording that its use is
+discouraged (<a href="#legacy" class="auto internal xref">Section 4</a>). Registering the ubiquitous legacy name is a record
+of existing practice, not the minting of a new "X-" field, and is therefore
+consistent with <span>[<a href="#RFC6648" class="cite xref">RFC6648</a>]</span>.<a href="#section-8-1" class="pilcrow">¶</a></p>
+<p id="section-8-2">Entry 1:<a href="#section-8-2" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-8-4.1">
-          <p id="section-8-4.1.1">Field Name: Redirect-By<a href="#section-8-4.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-8-3.1">
+          <p id="section-8-3.1.1">Field Name: Redirect-By<a href="#section-8-3.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-4.2">
-          <p id="section-8-4.2.1">Status: permanent<a href="#section-8-4.2.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-8-3.2">
+          <p id="section-8-3.2.1">Status: permanent<a href="#section-8-3.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-4.3">
-          <p id="section-8-4.3.1">Structured Type: None<a href="#section-8-4.3.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-8-3.3">
+          <p id="section-8-3.3.1">Structured Type: Item<a href="#section-8-3.3.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-4.4">
-          <p id="section-8-4.4.1">Reference: This document<a href="#section-8-4.4.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-8-3.4">
+          <p id="section-8-3.4.1">Reference: This document<a href="#section-8-3.4.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-4.5">
-          <p id="section-8-4.5.1">Comments: Preferred name. Also deployed under the legacy name X-Redirect-By.<a href="#section-8-4.5.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-8-3.5">
+          <p id="section-8-3.5.1">Comments: Successor to the deprecated X-Redirect-By field.<a href="#section-8-3.5.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-8-5">Entry 2:<a href="#section-8-5" class="pilcrow">¶</a></p>
+<p id="section-8-4">Entry 2:<a href="#section-8-4" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-8-6.1">
-          <p id="section-8-6.1.1">Field Name: X-Redirect-By<a href="#section-8-6.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-8-5.1">
+          <p id="section-8-5.1.1">Field Name: X-Redirect-By<a href="#section-8-5.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-6.2">
-          <p id="section-8-6.2.1">Status: permanent<a href="#section-8-6.2.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-8-5.2">
+          <p id="section-8-5.2.1">Status: deprecated<a href="#section-8-5.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-6.3">
-          <p id="section-8-6.3.1">Structured Type: None<a href="#section-8-6.3.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-8-5.3">
+          <p id="section-8-5.3.1">Structured Type: None<a href="#section-8-5.3.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-6.4">
-          <p id="section-8-6.4.1">Reference: This document<a href="#section-8-6.4.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-8-5.4">
+          <p id="section-8-5.4.1">Reference: This document<a href="#section-8-5.4.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-8-6.5">
-          <p id="section-8-6.5.1">Comments: Legacy name for the Redirect-By field (<a href="#field" class="auto internal xref">Section 3</a>), retained for
-compatibility. Its use by new implementations is discouraged.<a href="#section-8-6.5.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-8-5.5">
+          <p id="section-8-5.5.1">Comments: Deprecated legacy name for the Redirect-By field (<a href="#field" class="auto internal xref">Section 3</a>).<a href="#section-8-5.5.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 </section>
@@ -1458,17 +1474,17 @@ compatibility. Its use by new implementations is discouraged.<a href="#section-8
         <dd>
 <span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="RFC5234">[RFC5234]</dt>
-        <dd>
-<span class="refAuthor">Crocker, D., Ed.</span> and <span class="refAuthor">P. Overell</span>, <span class="refTitle">"Augmented BNF for Syntax Specifications: ABNF"</span>, <span class="seriesInfo">STD 68</span>, <span class="seriesInfo">RFC 5234</span>, <span class="seriesInfo">DOI 10.17487/RFC5234</span>, <time datetime="2008-01" class="refDate">January 2008</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5234">https://www.rfc-editor.org/rfc/rfc5234</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="RFC8174">[RFC8174]</dt>
         <dd>
 <span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC9110">[RFC9110]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Fielding, R., Ed.</span>, <span class="refAuthor">Nottingham, M., Ed.</span>, and <span class="refAuthor">J. Reschke, Ed.</span>, <span class="refTitle">"HTTP Semantics"</span>, <span class="seriesInfo">STD 97</span>, <span class="seriesInfo">RFC 9110</span>, <span class="seriesInfo">DOI 10.17487/RFC9110</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9110">https://www.rfc-editor.org/rfc/rfc9110</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9651">[RFC9651]</dt>
+      <dd>
+<span class="refAuthor">Nottingham, M.</span> and <span class="refAuthor">P. Kamp</span>, <span class="refTitle">"Structured Field Values for HTTP"</span>, <span class="seriesInfo">RFC 9651</span>, <span class="seriesInfo">DOI 10.17487/RFC9651</span>, <time datetime="2024-09" class="refDate">September 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9651">https://www.rfc-editor.org/rfc/rfc9651</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
@@ -1490,10 +1506,6 @@ compatibility. Its use by new implementations is discouraged.<a href="#section-8
 <dt id="RFC9205">[RFC9205]</dt>
         <dd>
 <span class="refAuthor">Nottingham, M.</span>, <span class="refTitle">"Building Protocols with HTTP"</span>, <span class="seriesInfo">BCP 56</span>, <span class="seriesInfo">RFC 9205</span>, <span class="seriesInfo">DOI 10.17487/RFC9205</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9205">https://www.rfc-editor.org/rfc/rfc9205</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="RFC9651">[RFC9651]</dt>
-        <dd>
-<span class="refAuthor">Nottingham, M.</span> and <span class="refAuthor">P. Kamp</span>, <span class="refTitle">"Structured Field Values for HTTP"</span>, <span class="seriesInfo">RFC 9651</span>, <span class="seriesInfo">DOI 10.17487/RFC9651</span>, <time datetime="2024-09" class="refDate">September 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9651">https://www.rfc-editor.org/rfc/rfc9651</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="TYPO3-REDIRECTS">[TYPO3-REDIRECTS]</dt>
         <dd>
