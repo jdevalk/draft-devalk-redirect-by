@@ -112,14 +112,18 @@ The "Redirect-By" response header field allows the redirect decision-maker to
 identify itself.
 
 A redirect decision-maker MAY include a Redirect-By field in the response. When
-present, its value SHOULD be a short, stable identifier for that component, such
-as a product, service, or plugin name.
+present, its value SHOULD be a URI that identifies the component, such as the
+component's home page. A URI avoids collisions between components that share a
+name and removes ambiguity about which component is meant.
 
-The field is informational. A recipient MUST NOT treat the presence, absence, or
-value of Redirect-By as altering the meaning of the redirect; the Location field
-and status code retain their full semantics independent of it. A recipient that
-does not understand the field ignores it, as with any unrecognized field
-({{Section 5.1 of RFC9110}}).
+The field is informational and intended for human diagnosis of redirects. A
+recipient MUST NOT treat the presence, absence, or value of Redirect-By as
+altering the meaning of the redirect; the Location field and status code retain
+their full semantics independent of it. A recipient MUST NOT base automated
+decisions on the value: for example, it MUST NOT follow or ignore a redirect
+depending on whether the value matches a particular identifier, such as
+"https://cms.example.com/". A recipient that does not understand the field
+ignores it, as with any unrecognized field ({{Section 5.1 of RFC9110}}).
 
 ## Syntax
 
@@ -136,6 +140,12 @@ or, for an identifier that a Token cannot carry:
 
 ~~~
 Redirect-By: "Yoast SEO Premium"
+~~~
+
+A URI is carried as a String:
+
+~~~
+Redirect-By: "https://wordpress.org/"
 ~~~
 
 Redirect-By is a singleton field, not a list. A sender MUST NOT generate more
