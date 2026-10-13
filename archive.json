@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-11T02:39:51.069113+00:00",
+  "timestamp": "2026-10-13T04:19:30.680712+00:00",
   "repo": "jdevalk/draft-devalk-redirect-by",
   "labels": [
     {
@@ -50,5 +50,32 @@
     }
   ],
   "issues": [],
-  "pulls": []
+  "pulls": [
+    {
+      "number": 1,
+      "id": "PR_kwDOTYWUvM8AAAABICajaw",
+      "title": "Prefer URI values; forbid automated decisions based on the value",
+      "url": "https://github.com/jdevalk/draft-devalk-redirect-by/pull/1",
+      "state": "OPEN",
+      "author": "jdevalk",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Implements the two changes proposed in reply to Asbjorn Ulsberg's review of the draft:\n\n1. The value SHOULD be a URI identifying the redirect decision-maker (e.g. its home page), to avoid collisions between components that share a name and remove ambiguity. Added a URI example in the Syntax section.\n2. States explicitly that the field is for human diagnosis of redirects and that recipients MUST NOT base automated decisions on the value, with an example of the forbidden pattern (following or ignoring a redirect depending on whether the value matches a particular identifier).",
+      "createdAt": "2026-10-12T20:00:37Z",
+      "updatedAt": "2026-10-12T20:00:37Z",
+      "baseRepository": "jdevalk/draft-devalk-redirect-by",
+      "baseRefName": "main",
+      "baseRefOid": "80ff3a7f3d02403217be6b7ec7b5a7729825f080",
+      "headRepository": "jdevalk/draft-devalk-redirect-by",
+      "headRefName": "asbjorn-feedback-uri-and-no-automation",
+      "headRefOid": "e9d4c8a1d810e4cbc178498e940d9ffb9b94fdd5",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    }
+  ]
 }
