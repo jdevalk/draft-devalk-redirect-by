@@ -13,26 +13,26 @@ itself, so that an operator diagnosing a redirect can determine which component
 was responsible for it. The field succeeds the widely deployed, non-standard
 X-Redirect-By header, which this document deprecates. 
     " name="description">
-<meta content="xml2rfc 3.34.0" name="generator">
+<meta content="xml2rfc 3.34.1" name="generator">
 <meta content="redirect" name="keyword">
 <meta content="debugging" name="keyword">
 <meta content="observability" name="keyword">
 <meta content="http header" name="keyword">
 <meta content="draft-devalk-redirect-by-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.34.0
-    Python 3.14.5
-    ConfigArgParse 1.7.5
+  xml2rfc 3.34.1
+    Python 3.14.8
+    ConfigArgParse 1.8.0
     google-i18n-address 3.1.1
     intervaltree 3.2.1
     Jinja2 3.1.6
     lxml 6.1.1
     natsort 8.4.0
-    platformdirs 4.10.1
+    platformdirs 4.13.4
     pycountry 24.6.1
     PyYAML 6.0.3
     requests 2.33.1
-    wcwidth 0.8.2
+    wcwidth 0.9.2
 -->
 <link href="draft-devalk-redirect-by.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -1051,11 +1051,11 @@ svg {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">Redirect-By</td>
-<td class="right">July 2026</td>
+<td class="right">October 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">de Valk</td>
-<td class="center">Expires 20 January 2027</td>
+<td class="center">Expires 21 April 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1068,12 +1068,12 @@ svg {
 <dd class="internet-draft">draft-devalk-redirect-by-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-07-19" class="published">19 July 2026</time>
+<time datetime="2026-10-18" class="published">18 October 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-01-20">20 January 2027</time></dd>
+<dd class="expires"><time datetime="2027-04-21">21 April 2027</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1111,7 +1111,7 @@ X-Redirect-By header, which this document deprecates.<a href="#section-abstract-
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 20 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 21 April 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1260,13 +1260,17 @@ or intermediary that serializes or forwards that response.<a href="#section-2-3"
 <p id="section-3-1">The "Redirect-By" response header field allows the redirect decision-maker to
 identify itself.<a href="#section-3-1" class="pilcrow">¶</a></p>
 <p id="section-3-2">A redirect decision-maker <span class="bcp14">MAY</span> include a Redirect-By field in the response. When
-present, its value <span class="bcp14">SHOULD</span> be a short, stable identifier for that component, such
-as a product, service, or plugin name.<a href="#section-3-2" class="pilcrow">¶</a></p>
-<p id="section-3-3">The field is informational. A recipient <span class="bcp14">MUST NOT</span> treat the presence, absence, or
-value of Redirect-By as altering the meaning of the redirect; the Location field
-and status code retain their full semantics independent of it. A recipient that
-does not understand the field ignores it, as with any unrecognized field
-(<span><a href="https://rfc-editor.org/rfc/rfc9110#section-5.1" class="relref">Section 5.1</a> of [<a href="#RFC9110" class="cite xref">RFC9110</a>]</span>).<a href="#section-3-3" class="pilcrow">¶</a></p>
+present, its value <span class="bcp14">SHOULD</span> be a URI that identifies the component, such as the
+component's home page. A URI avoids collisions between components that share a
+name and removes ambiguity about which component is meant.<a href="#section-3-2" class="pilcrow">¶</a></p>
+<p id="section-3-3">The field is informational and intended for human diagnosis of redirects. A
+recipient <span class="bcp14">MUST NOT</span> treat the presence, absence, or value of Redirect-By as
+altering the meaning of the redirect; the Location field and status code retain
+their full semantics independent of it. A recipient <span class="bcp14">MUST NOT</span> base automated
+decisions on the value: for example, it <span class="bcp14">MUST NOT</span> follow or ignore a redirect
+depending on whether the value matches a particular identifier, such as
+"https://cms.example.com/". A recipient that does not understand the field
+ignores it, as with any unrecognized field (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-5.1" class="relref">Section 5.1</a> of [<a href="#RFC9110" class="cite xref">RFC9110</a>]</span>).<a href="#section-3-3" class="pilcrow">¶</a></p>
 <div id="syntax">
 <section id="section-3.1">
         <h3 id="name-syntax">
@@ -1287,15 +1291,21 @@ Redirect-By: WordPress
 Redirect-By: "Yoast SEO Premium"
 </pre><a href="#section-3.1-4" class="pilcrow">¶</a>
 </div>
-<p id="section-3.1-5">Redirect-By is a singleton field, not a list. A sender <span class="bcp14">MUST NOT</span> generate more
+<p id="section-3.1-5">A URI is carried as a String:<a href="#section-3.1-5" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3.1-6">
+<pre>
+Redirect-By: "https://wordpress.org/"
+</pre><a href="#section-3.1-6" class="pilcrow">¶</a>
+</div>
+<p id="section-3.1-7">Redirect-By is a singleton field, not a list. A sender <span class="bcp14">MUST NOT</span> generate more
 than one Redirect-By field line in a response. A recipient <span class="bcp14">MUST</span> process the
 field as a Structured Field Item; if that parsing fails, or the value is
 neither a Token nor a String, the recipient <span class="bcp14">MUST</span> ignore the field. This rule
 also disposes of duplicate field lines: combining them into a single value
 (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-5.2" class="relref">Section 5.2</a> of [<a href="#RFC9110" class="cite xref">RFC9110</a>]</span>) produces a value that does not parse as an Item,
-so the field is ignored.<a href="#section-3.1-5" class="pilcrow">¶</a></p>
-<p id="section-3.1-6">The deployed X-Redirect-By field carries the identifier as free-form text
-rather than as a Structured Field; see <a href="#legacy" class="auto internal xref">Section 4</a>.<a href="#section-3.1-6" class="pilcrow">¶</a></p>
+so the field is ignored.<a href="#section-3.1-7" class="pilcrow">¶</a></p>
+<p id="section-3.1-8">The deployed X-Redirect-By field carries the identifier as free-form text
+rather than as a Structured Field; see <a href="#legacy" class="auto internal xref">Section 4</a>.<a href="#section-3.1-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="multiple-redirects-and-intermediaries">
