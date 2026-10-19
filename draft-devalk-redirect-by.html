@@ -1055,7 +1055,7 @@ svg {
 </tr></thead>
 <tfoot><tr>
 <td class="left">de Valk</td>
-<td class="center">Expires 21 April 2027</td>
+<td class="center">Expires 22 April 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1068,12 +1068,12 @@ svg {
 <dd class="internet-draft">draft-devalk-redirect-by-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-10-18" class="published">18 October 2026</time>
+<time datetime="2026-10-19" class="published">19 October 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-04-21">21 April 2027</time></dd>
+<dd class="expires"><time datetime="2027-04-22">22 April 2027</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1111,7 +1111,7 @@ X-Redirect-By header, which this document deprecates.<a href="#section-abstract-
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 21 April 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 22 April 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1260,52 +1260,56 @@ or intermediary that serializes or forwards that response.<a href="#section-2-3"
 <p id="section-3-1">The "Redirect-By" response header field allows the redirect decision-maker to
 identify itself.<a href="#section-3-1" class="pilcrow">¶</a></p>
 <p id="section-3-2">A redirect decision-maker <span class="bcp14">MAY</span> include a Redirect-By field in the response. When
-present, its value <span class="bcp14">SHOULD</span> be a URI that identifies the component, such as the
-component's home page. A URI avoids collisions between components that share a
-name and removes ambiguity about which component is meant.<a href="#section-3-2" class="pilcrow">¶</a></p>
-<p id="section-3-3">The field is informational and intended for human diagnosis of redirects. A
+present, its value <span class="bcp14">SHOULD</span> begin with a URI that identifies the component, such
+as the component's home page. A URI avoids collisions between components that
+share a name and removes ambiguity about which component is meant.<a href="#section-3-2" class="pilcrow">¶</a></p>
+<p id="section-3-3">The remainder of the String <span class="bcp14">MAY</span> contain human-readable diagnostic context that
+helps an operator distinguish where the redirect came from, such as the
+installation, deployment, handler, function, plugin, or rule. For example:<a href="#section-3-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3-4">
+<pre>
+Redirect-By: "https://wordpress.org/; FrontEndBypass"
+</pre><a href="#section-3-4" class="pilcrow">¶</a>
+</div>
+<p id="section-3-5">This document defines no structure for the additional context. Recipients <span class="bcp14">MUST</span>
+treat the entire String as opaque and <span class="bcp14">MUST NOT</span> assume that either the URI or
+additional context can be extracted from it.<a href="#section-3-5" class="pilcrow">¶</a></p>
+<p id="section-3-6">The field is informational and intended for human diagnosis of redirects. A
 recipient <span class="bcp14">MUST NOT</span> treat the presence, absence, or value of Redirect-By as
 altering the meaning of the redirect; the Location field and status code retain
 their full semantics independent of it. A recipient <span class="bcp14">MUST NOT</span> base automated
 decisions on the value: for example, it <span class="bcp14">MUST NOT</span> follow or ignore a redirect
 depending on whether the value matches a particular identifier, such as
 "https://cms.example.com/". A recipient that does not understand the field
-ignores it, as with any unrecognized field (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-5.1" class="relref">Section 5.1</a> of [<a href="#RFC9110" class="cite xref">RFC9110</a>]</span>).<a href="#section-3-3" class="pilcrow">¶</a></p>
+ignores it, as with any unrecognized field (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-5.1" class="relref">Section 5.1</a> of [<a href="#RFC9110" class="cite xref">RFC9110</a>]</span>).<a href="#section-3-6" class="pilcrow">¶</a></p>
 <div id="syntax">
 <section id="section-3.1">
         <h3 id="name-syntax">
 <a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-syntax" class="section-name selfRef">Syntax</a>
         </h3>
-<p id="section-3.1-1">Redirect-By is an Item Structured Field <span>[<a href="#RFC9651" class="cite xref">RFC9651</a>]</span>. Its value <span class="bcp14">MUST</span> be a Token
-(<span><a href="https://rfc-editor.org/rfc/rfc9651#section-3.3.4" class="relref">Section 3.3.4</a> of [<a href="#RFC9651" class="cite xref">RFC9651</a>]</span>) or a String (<span><a href="https://rfc-editor.org/rfc/rfc9651#section-3.3.3" class="relref">Section 3.3.3</a> of [<a href="#RFC9651" class="cite xref">RFC9651</a>]</span>)
-naming the redirect decision-maker; this document defines no parameters. For
-example:<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1-1">Redirect-By is an Item Structured Field <span>[<a href="#RFC9651" class="cite xref">RFC9651</a>]</span>. Its value <span class="bcp14">MUST</span> be a String
+(<span><a href="https://rfc-editor.org/rfc/rfc9651#section-3.3.3" class="relref">Section 3.3.3</a> of [<a href="#RFC9651" class="cite xref">RFC9651</a>]</span>) naming the redirect decision-maker; this document
+defines no parameters. For example:<a href="#section-3.1-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-3.1-2">
 <pre>
-Redirect-By: WordPress
+Redirect-By: "https://wordpress.org/"
 </pre><a href="#section-3.1-2" class="pilcrow">¶</a>
 </div>
-<p id="section-3.1-3">or, for an identifier that a Token cannot carry:<a href="#section-3.1-3" class="pilcrow">¶</a></p>
+<p id="section-3.1-3">or, with human-readable diagnostic context:<a href="#section-3.1-3" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-3.1-4">
 <pre>
-Redirect-By: "Yoast SEO Premium"
+Redirect-By: "https://wordpress.org/; FrontEndBypass"
 </pre><a href="#section-3.1-4" class="pilcrow">¶</a>
 </div>
-<p id="section-3.1-5">A URI is carried as a String:<a href="#section-3.1-5" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-3.1-6">
-<pre>
-Redirect-By: "https://wordpress.org/"
-</pre><a href="#section-3.1-6" class="pilcrow">¶</a>
-</div>
-<p id="section-3.1-7">Redirect-By is a singleton field, not a list. A sender <span class="bcp14">MUST NOT</span> generate more
+<p id="section-3.1-5">Redirect-By is a singleton field, not a list. A sender <span class="bcp14">MUST NOT</span> generate more
 than one Redirect-By field line in a response. A recipient <span class="bcp14">MUST</span> process the
-field as a Structured Field Item; if that parsing fails, or the value is
-neither a Token nor a String, the recipient <span class="bcp14">MUST</span> ignore the field. This rule
+field as a Structured Field Item; if that parsing fails, or the value is not a
+String, the recipient <span class="bcp14">MUST</span> ignore the field. This rule
 also disposes of duplicate field lines: combining them into a single value
 (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-5.2" class="relref">Section 5.2</a> of [<a href="#RFC9110" class="cite xref">RFC9110</a>]</span>) produces a value that does not parse as an Item,
-so the field is ignored.<a href="#section-3.1-7" class="pilcrow">¶</a></p>
-<p id="section-3.1-8">The deployed X-Redirect-By field carries the identifier as free-form text
-rather than as a Structured Field; see <a href="#legacy" class="auto internal xref">Section 4</a>.<a href="#section-3.1-8" class="pilcrow">¶</a></p>
+so the field is ignored.<a href="#section-3.1-5" class="pilcrow">¶</a></p>
+<p id="section-3.1-6">The deployed X-Redirect-By field carries the identifier as free-form text
+rather than as a Structured Field; see <a href="#legacy" class="auto internal xref">Section 4</a>.<a href="#section-3.1-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="multiple-redirects-and-intermediaries">
@@ -1381,11 +1385,13 @@ and Redirect-By follows that recommendation. The deployed X-Redirect-By field
 predates this document and transmits its value as unquoted free-form text, so
 the two fields can differ on the wire: an identifier containing spaces is sent
 bare in X-Redirect-By but as a quoted String in Redirect-By. This document
-accepts that divergence. Migration already requires senders to adopt a new
-field name, so adopting the standard serialization at the same time costs
-little, and it buys well-defined parsing, an unambiguous rule for duplicate or
-combined field lines (<a href="#field" class="auto internal xref">Section 3</a>), and the ability for future documents to
-extend the field with parameters.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+accepts that divergence. The value is always a String, never a Token. A single
+serialization supports both the recommended URI prefix and optional
+human-readable diagnostic context while keeping parsing simple. Migration
+already requires senders to adopt a new field name, so adopting the standard
+serialization at the same time costs little, and it buys well-defined parsing,
+an unambiguous rule for duplicate or combined field lines (<a href="#field" class="auto internal xref">Section 3</a>), and the
+ability for future documents to extend the field with parameters.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1404,8 +1410,11 @@ an attacker in fingerprinting it. To limit this exposure, the value <span class=
 coarse component identifier and <span class="bcp14">SHOULD NOT</span> include software versions, file
 system paths, internal host names, or the specific rule that matched. For
 example, "WordPress" is appropriate; "WordPress 6.5.2 via
-wp-content/plugins/acme/redirects.php:214" is not. Operators for whom any such
-disclosure is unacceptable can omit the field; it is optional.<a href="#section-6-2" class="pilcrow">¶</a></p>
+wp-content/plugins/acme/redirects.php:214" is not. The same applies to any
+additional diagnostic context carried after the URI: it <span class="bcp14">SHOULD</span> aid diagnosis
+without exposing internal host names or infrastructure details.
+Operators for whom any such disclosure is unacceptable can omit the field; it
+is optional.<a href="#section-6-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="privacy-considerations">
