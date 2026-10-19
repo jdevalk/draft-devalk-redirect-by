@@ -112,9 +112,21 @@ The "Redirect-By" response header field allows the redirect decision-maker to
 identify itself.
 
 A redirect decision-maker MAY include a Redirect-By field in the response. When
-present, its value SHOULD be a URI that identifies the component, such as the
-component's home page. A URI avoids collisions between components that share a
-name and removes ambiguity about which component is meant.
+present, its value SHOULD begin with a URI that identifies the component, such
+as the component's home page. A URI avoids collisions between components that
+share a name and removes ambiguity about which component is meant.
+
+The remainder of the String MAY contain human-readable diagnostic context that
+helps an operator distinguish where the redirect came from, such as the
+installation, deployment, handler, function, plugin, or rule. For example:
+
+~~~
+Redirect-By: "https://wordpress.org/; FrontEndBypass"
+~~~
+
+This document defines no structure for the additional context. Recipients MUST
+treat the entire String as opaque and MUST NOT assume that either the URI or
+additional context can be extracted from it.
 
 The field is informational and intended for human diagnosis of redirects. A
 recipient MUST NOT treat the presence, absence, or value of Redirect-By as
@@ -127,31 +139,24 @@ ignores it, as with any unrecognized field ({{Section 5.1 of RFC9110}}).
 
 ## Syntax
 
-Redirect-By is an Item Structured Field {{RFC9651}}. Its value MUST be a Token
-({{Section 3.3.4 of RFC9651}}) or a String ({{Section 3.3.3 of RFC9651}})
-naming the redirect decision-maker; this document defines no parameters. For
-example:
-
-~~~
-Redirect-By: WordPress
-~~~
-
-or, for an identifier that a Token cannot carry:
-
-~~~
-Redirect-By: "Yoast SEO Premium"
-~~~
-
-A URI is carried as a String:
+Redirect-By is an Item Structured Field {{RFC9651}}. Its value MUST be a String
+({{Section 3.3.3 of RFC9651}}) naming the redirect decision-maker; this document
+defines no parameters. For example:
 
 ~~~
 Redirect-By: "https://wordpress.org/"
 ~~~
 
+or, with human-readable diagnostic context:
+
+~~~
+Redirect-By: "https://wordpress.org/; FrontEndBypass"
+~~~
+
 Redirect-By is a singleton field, not a list. A sender MUST NOT generate more
 than one Redirect-By field line in a response. A recipient MUST process the
-field as a Structured Field Item; if that parsing fails, or the value is
-neither a Token nor a String, the recipient MUST ignore the field. This rule
+field as a Structured Field Item; if that parsing fails, or the value is not a
+String, the recipient MUST ignore the field. This rule
 also disposes of duplicate field lines: combining them into a single value
 ({{Section 5.2 of RFC9110}}) produces a value that does not parse as an Item,
 so the field is ignored.
@@ -209,11 +214,13 @@ and Redirect-By follows that recommendation. The deployed X-Redirect-By field
 predates this document and transmits its value as unquoted free-form text, so
 the two fields can differ on the wire: an identifier containing spaces is sent
 bare in X-Redirect-By but as a quoted String in Redirect-By. This document
-accepts that divergence. Migration already requires senders to adopt a new
-field name, so adopting the standard serialization at the same time costs
-little, and it buys well-defined parsing, an unambiguous rule for duplicate or
-combined field lines ({{field}}), and the ability for future documents to
-extend the field with parameters.
+accepts that divergence. The value is always a String, never a Token. A single
+serialization supports both the recommended URI prefix and optional
+human-readable diagnostic context while keeping parsing simple. Migration
+already requires senders to adopt a new field name, so adopting the standard
+serialization at the same time costs little, and it buys well-defined parsing,
+an unambiguous rule for duplicate or combined field lines ({{field}}), and the
+ability for future documents to extend the field with parameters.
 
 # Security Considerations
 
@@ -227,8 +234,11 @@ an attacker in fingerprinting it. To limit this exposure, the value SHOULD be a
 coarse component identifier and SHOULD NOT include software versions, file
 system paths, internal host names, or the specific rule that matched. For
 example, "WordPress" is appropriate; "WordPress 6.5.2 via
-wp-content/plugins/acme/redirects.php:214" is not. Operators for whom any such
-disclosure is unacceptable can omit the field; it is optional.
+wp-content/plugins/acme/redirects.php:214" is not. The same applies to any
+additional diagnostic context carried after the URI: it SHOULD aid diagnosis
+without exposing internal host names or infrastructure details.
+Operators for whom any such disclosure is unacceptable can omit the field; it
+is optional.
 
 # Privacy Considerations
 
